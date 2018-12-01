@@ -1,6 +1,4 @@
 // CSV headers required: Tweet, Date (dates in format DD/MM/YYYY), Time (24 hour clock, in format HH:MM)
-// Example of running script from CLI: node index.js --username myUsername, --password myPassword --filename ./tweets.csv
-// you can generate dates with e.g. 5 days between them by doing =D4+5 with D4 being a date (use format tab in Sheets)
 
 const puppeteer = require('puppeteer');
 const moment = require('moment');
