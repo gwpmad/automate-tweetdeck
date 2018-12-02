@@ -5,7 +5,14 @@ const moment = require('moment');
 const csv = require('fast-csv');
 const fs = require('fs');
 
-const { username, password, filename } = require('minimist')(process.argv.slice(2));
+const argv = require('minimist')(process.argv.slice(2));
+['username', 'password', 'filename'].forEach((arg) => {
+  if (!argv[arg]) {
+    console.log('Missing argument:', arg);
+    return process.exit(1);
+  }
+});
+const { username, password, filename } = argv;
 
 const focusAndType = async (elementHandle, message) => {
   await elementHandle.focus();
