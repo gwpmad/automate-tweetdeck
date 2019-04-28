@@ -75,19 +75,25 @@ const addTime = async (page, time) => {
 };
 
 const scheduleTweet = async (page, { Tweet: tweet, Date: date, Time: time}) => {
-  const tweetButton = await page.$('.js-show-drawer.tweet-button');
-  await Promise.all([
-    tweetButton.click(),
-    page.waitForSelector('.js-app-content.is-open'),
-  ]);
   await page.waitFor(500)
+  const stayOpenCheckbox = await page.$('.js-compose-stay-open');
+  if (stayOpenCheckbox.checked) {
+    // Ensure panel closes after tweets - otherwise weird things can happen with the calendar resulting in incorrect tweet dates
+    await stayOpenCheckbox.click();
+  }
+
   const tweetTextArea = await page.$('textarea.js-compose-text');
   await focusAndType(tweetTextArea, tweet);
   await addDate(page, date);
   await addTime(page, time);
 
+  const scheduleTimeLabel = await page.$('.js-schedule-button-label');
+  const scheduleTime = await this.page.evaluate(el => el.innerText, scheduleTimeLabel);
+  
   const sendTweetButton = await page.$('button.js-send-button');
   await sendTweetButton.click();
+  console.log(`${tweet}\n${scheduleTime}\n\n`)
+  await page.waitFor(1000)
 };
 
 const parseCsv = () => new Promise((resolve, reject) => {
@@ -109,7 +115,6 @@ puppeteer.launch({ headless: false }).then(async (browser) => {
 
     for (const tweet of tweets) {
       await scheduleTweet(page, tweet);
-      await page.waitForSelector('.js-app-content:not(.is-open)');
     }
     console.log('finished')
     process.exit(0);
