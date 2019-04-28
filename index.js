@@ -77,7 +77,8 @@ const addTime = async (page, time) => {
 const scheduleTweet = async (page, { Tweet: tweet, Date: date, Time: time}) => {
   await page.waitFor(500)
   const stayOpenCheckbox = await page.$('.js-compose-stay-open');
-  if (stayOpenCheckbox.checked) {
+  const stayOpenCheckboxChecked = await page.evaluate(el => el.checked, stayOpenCheckbox);
+  if (stayOpenCheckboxChecked) {
     // Ensure panel closes after tweets - otherwise weird things can happen with the calendar resulting in incorrect tweet dates
     await stayOpenCheckbox.click();
   }
@@ -88,7 +89,7 @@ const scheduleTweet = async (page, { Tweet: tweet, Date: date, Time: time}) => {
   await addTime(page, time);
 
   const scheduleTimeLabel = await page.$('.js-schedule-button-label');
-  const scheduleTime = await this.page.evaluate(el => el.innerText, scheduleTimeLabel);
+  const scheduleTime = await page.evaluate(el => el.innerText, scheduleTimeLabel);
   
   const sendTweetButton = await page.$('button.js-send-button');
   await sendTweetButton.click();
@@ -114,6 +115,12 @@ puppeteer.launch({ headless: false }).then(async (browser) => {
     await logIn(page);
 
     for (const tweet of tweets) {
+      const newTweetTabIsOpen = await page.$('.js-app-content.is-open');
+      if (!newTweetTabIsOpen) {
+        const tweetButton = await page.$('.js-show-drawer.tweet-button');
+        await tweetButton.click();
+        await page.waitForSelector('.js-app-content.is-open');
+      }
       await scheduleTweet(page, tweet);
     }
     console.log('finished')
