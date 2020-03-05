@@ -1,3 +1,5 @@
+## This project is now likely out of date and buggy - if only Tweetdeck had a simpler UI!
+
 ### Automate-Tweetdeck
 Uses a headless browser (Chromium) to schedule all your tweets! Just put them in a CSV with date and time and the rest is easy.
 
