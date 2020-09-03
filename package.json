@@ -12,6 +12,6 @@
     "fast-csv": "^2.4.1",
     "minimist": "^1.2.0",
     "moment": "^2.22.2",
-    "puppeteer": "^1.11.0"
+    "puppeteer": "^1.13.0"
   }
 }
